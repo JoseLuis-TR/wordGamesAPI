@@ -11,6 +11,8 @@ La API está desarrollada usando Spring Boot y haciendo uso de MYSQL como base d
 
 - **master**: Rama inicial del proyecto.
     - Preparación del proyecto y conexión con la base de datos.
+- **1-EntidadesJugadorEquipo**: Entidades Jugador y equipo
+  - Creación de las entidades Jugador y Equipo. 
 
 ## 📚 Información de interés
 
