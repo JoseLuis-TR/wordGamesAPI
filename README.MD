@@ -9,7 +9,7 @@ La API está desarrollada usando Spring Boot y haciendo uso de MYSQL como base d
 
 ``Esta sección se irá actualizando con la adición de nuevas ramas.``
 
-- **main**: Rama inicial del proyecto.
+- **master**: Rama inicial del proyecto.
     - Preparación del proyecto y conexión con la base de datos.
 
 ## 📚 Información de interés
