@@ -9,6 +9,11 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Clase creada con la intención de crear una respuesta genérica para las peticiones
+ *
+ * @param <T>
+ */
 @Getter
 @Setter
 @NoArgsConstructor

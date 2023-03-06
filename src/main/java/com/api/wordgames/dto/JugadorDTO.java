@@ -3,6 +3,9 @@ package com.api.wordgames.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Clase necesaria para el convertidor de Jugador a JugadorDTO
+ */
 @Getter @Setter
 public class JugadorDTO {
 

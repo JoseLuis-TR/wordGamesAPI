@@ -83,6 +83,7 @@ public class EquipoController {
             JsonResponse<Equipo> responseError = new JsonResponse<>(HttpStatus.BAD_REQUEST, "El equipo ya existe", null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseError);
         }
+        // Nos aseguramos de que el equipo no tenga puntos ni logo al crearse
         newEquipo.setPuntos(0);
         newEquipo.setLogo("");
         JsonResponse<Equipo> responseOk = new JsonResponse<>(HttpStatus.CREATED, "Equipo Creado", equipoRepository.save(newEquipo));
@@ -100,13 +101,16 @@ public class EquipoController {
     public ResponseEntity<JsonResponse<Equipo>> modifyEquipo(@PathVariable Long id, @RequestBody Equipo newEquipo){
         Optional<Equipo> equipoBuscado = equipoRepository.findById(id);
         List<Equipo> equiposExiste = equipoRepository.findByNombreEqualsIgnoreCase(newEquipo.getNombre());
+        // Comprobamos que el equipo existe
         if(equipoBuscado.isEmpty()){
             JsonResponse<Equipo> responseError = new JsonResponse<>(HttpStatus.NOT_FOUND, "El equipo no existe", null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseError);
+        // Comprobamos que el nombre del equipo no este en uso
         } else if(!equiposExiste.isEmpty()){
             JsonResponse<Equipo> responseError = new JsonResponse<>(HttpStatus.BAD_REQUEST, "El nombre del equipo ya esta en uso", null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseError);
         }else {
+            // Comprobamos que datos deben ser mantenidos y cuales modificados
             if (newEquipo.getNombre() != null
                     && !newEquipo.getNombre().isEmpty()
                     && !newEquipo.getNombre().equals(equipoBuscado.get().getNombre())){
