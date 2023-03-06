@@ -27,6 +27,7 @@ Se adjunta en la carpeta resources el archivo JSON con la exportación de las pr
     - Control de errores.
     - **A considerar** : Buscar manera de indicar nulo en la columna de equipo de jugador cuando se realice un DELETE 
       del equipo en el que se encuentra (Actualmente solo se puede realizar desde la base de datos con un ON DELETE).
+- **2-EntidadesPartida**: Entidad Partida
 
 ## 📚 Información de interés
 
