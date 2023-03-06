@@ -11,19 +11,19 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "equipo")
-public class Equipos {
+public class Equipo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "nombre", length = 50)
+    @Column(name = "nombre", length = 50, nullable = false, unique = true)
     private String nombre;
 
-    @Column(name = "puntos")
-    private Integer puntos;
+    @Column(name = "puntos", nullable = false)
+    private Integer puntos = 0;
 
     @Column(name = "logo", length = 255)
-    private String logo;
+    private String logo = "";
 }
