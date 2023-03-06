@@ -1,6 +1,5 @@
 package com.api.wordgames.controller;
 
-import com.api.wordgames.repositories.JugadorRepository;
 import com.api.wordgames.response.JsonResponse;
 import com.api.wordgames.model.Equipo;
 import com.api.wordgames.repositories.EquipoRepository;
@@ -17,7 +16,6 @@ import java.util.Optional;
 public class EquipoController {
 
     private final EquipoRepository equipoRepository;
-    private final JugadorRepository jugadorRepository;
 
     /**
      * Obtenemos todos los equipos
@@ -94,13 +92,13 @@ public class EquipoController {
      * Modificamos un equipo
      *
      * @param id
-     * @param newEquipo
+     * @param modEquipo
      * @return Error 404 si no encuentra el equipo
      */
     @PutMapping("/equipo/{id}")
-    public ResponseEntity<JsonResponse<Equipo>> modifyEquipo(@PathVariable Long id, @RequestBody Equipo newEquipo){
+    public ResponseEntity<JsonResponse<Equipo>> modifyEquipo(@PathVariable Long id, @RequestBody Equipo modEquipo){
         Optional<Equipo> equipoBuscado = equipoRepository.findById(id);
-        List<Equipo> equiposExiste = equipoRepository.findByNombreEqualsIgnoreCase(newEquipo.getNombre());
+        List<Equipo> equiposExiste = equipoRepository.findByNombreEqualsIgnoreCase(modEquipo.getNombre());
         // Comprobamos que el equipo existe
         if(equipoBuscado.isEmpty()){
             JsonResponse<Equipo> responseError = new JsonResponse<>(HttpStatus.NOT_FOUND, "El equipo no existe", null);
@@ -111,14 +109,14 @@ public class EquipoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseError);
         }else {
             // Comprobamos que datos deben ser mantenidos y cuales modificados
-            if (newEquipo.getNombre() != null
-                    && !newEquipo.getNombre().isEmpty()
-                    && !newEquipo.getNombre().equals(equipoBuscado.get().getNombre())){
-                equipoBuscado.get().setNombre(newEquipo.getNombre());
+            if (modEquipo.getNombre() != null
+                    && !modEquipo.getNombre().isEmpty()
+                    && !modEquipo.getNombre().equals(equipoBuscado.get().getNombre())){
+                equipoBuscado.get().setNombre(modEquipo.getNombre());
             }
-            if(newEquipo.getLogo() != null
-                    && !newEquipo.getLogo().equals(equipoBuscado.get().getLogo())){
-                equipoBuscado.get().setLogo(newEquipo.getLogo());
+            if(modEquipo.getLogo() != null
+                    && !modEquipo.getLogo().equals(equipoBuscado.get().getLogo())){
+                equipoBuscado.get().setLogo(modEquipo.getLogo());
             }
             JsonResponse<Equipo> responseOk = new JsonResponse<>(HttpStatus.OK, "Equipo Modificado", equipoRepository.save(equipoBuscado.get()));
             return ResponseEntity.status(HttpStatus.OK).body(responseOk);

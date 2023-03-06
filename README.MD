@@ -27,7 +27,11 @@ Se adjunta en la carpeta resources el archivo JSON con la exportación de las pr
     - Control de errores.
     - **A considerar** : Buscar manera de indicar nulo en la columna de equipo de jugador cuando se realice un DELETE 
       del equipo en el que se encuentra (Actualmente solo se puede realizar desde la base de datos con un ON DELETE).
-- **2-EntidadesPartida**: Entidad Partida
+- **2-EntidadesPartida**: Entidad Partida y Juego
+    - Creación de la entidad Partida y Juego.
+    - CRUD de Partida y Juego.
+    - Trigger en la base de datos para actualizar los puntos de la tabla jugador y equipo cada vez que se añade una nueva partida.
+
 
 ## 📚 Información de interés
 
