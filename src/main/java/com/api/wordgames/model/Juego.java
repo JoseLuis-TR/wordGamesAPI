@@ -1,10 +1,12 @@
 package com.api.wordgames.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,4 +32,8 @@ public class Juego {
     @Enumerated(EnumType.STRING)
     @Column(name="dificultad", nullable = false)
     private Dificultad dificultad;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "juego", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Partida> partidas;
 }

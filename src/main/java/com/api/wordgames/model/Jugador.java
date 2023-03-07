@@ -1,14 +1,14 @@
 package com.api.wordgames.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -41,4 +41,8 @@ public class Jugador {
     @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name="id_equipo")
     private Equipo equipo = null;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "jugador")
+    private Set<Partida> partidas;
 }
