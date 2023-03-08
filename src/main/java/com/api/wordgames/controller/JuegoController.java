@@ -1,5 +1,6 @@
 package com.api.wordgames.controller;
 
+import com.api.wordgames.dto.JuegoModDTO;
 import com.api.wordgames.model.Juego;
 import com.api.wordgames.response.JsonResponse;
 import com.api.wordgames.services.JuegoServices;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +30,8 @@ public class JuegoController {
         if (juegos.isEmpty()){
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(juegos);
+            List<Juego> juegoList = juegos.stream().collect(Collectors.toList());
+            return ResponseEntity.ok(juegoList);
         }
     }
 
@@ -76,8 +79,9 @@ public class JuegoController {
      * @return ResponseEntity con el status y el body, en caso de error, el body contiene el mensaje de error
      *          y el status 400 si el nombre del juego ya existe, en caso de éxito el body contiene el juego creado y el status 201
      */
-    @PostMapping("/juego")
-    public ResponseEntity<JsonResponse<Juego>> createJuego(@RequestBody Juego juego){
+    @PostMapping(value = "/juego")
+    public ResponseEntity<JsonResponse<Juego>> createJuego(@RequestBody JuegoModDTO juego){
+        System.out.println(juego);
         return juegoServices.saveJuego(juego);
     }
 
@@ -90,7 +94,7 @@ public class JuegoController {
      *          400 si el nombre del juego ya existe, 200 si se actualiza correctamente
      */
     @PutMapping("/juego/{id}")
-    public ResponseEntity<JsonResponse<Juego>> updateJuego(@PathVariable Long id, @RequestBody Juego modJuego){
+    public ResponseEntity<JsonResponse<Juego>> updateJuego(@PathVariable Long id, @RequestBody JuegoModDTO modJuego){
         return juegoServices.updateJuego(id, modJuego);
     }
 }

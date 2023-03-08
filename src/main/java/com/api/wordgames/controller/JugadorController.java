@@ -3,6 +3,8 @@ package com.api.wordgames.controller;
 import com.api.wordgames.dto.JugadorDTO;
 import com.api.wordgames.dto.JugadorModDTO;
 import com.api.wordgames.dto.converter.JugadorDTOConverter;
+import com.api.wordgames.model.Equipo;
+import com.api.wordgames.repositories.EquipoRepository;
 import com.api.wordgames.response.JsonResponse;
 import com.api.wordgames.model.Jugador;
 import com.api.wordgames.services.JugadorServices;
@@ -21,6 +23,7 @@ public class JugadorController {
 
     private final JugadorServices jugadorServices;
     private final JugadorDTOConverter jugadorDTOConverter;
+    private final EquipoRepository equipoRepository;
 
     /**
      * Obtenemos todos los jugadores
@@ -52,7 +55,6 @@ public class JugadorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseError);
         } else {
             JsonResponse<Jugador> response = new JsonResponse<>(HttpStatus.OK, "El jugador existe", jugadorBuscado.get());
-            System.out.println(jugadorBuscado.get().getEquipo());
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
     }
@@ -83,11 +85,13 @@ public class JugadorController {
      */
     @PostMapping("/jugador")
     public ResponseEntity<JsonResponse<Jugador>> createJugador(@RequestBody JugadorModDTO newJugador){
+        System.out.println(newJugador.getClave());
         return jugadorServices.saveJugador(newJugador);
     }
 
     /**
      * Actualizamos un jugador
+     * Función muy mejorable. No me gusta como está hecha.
      *
      * @param newJugador
      * @param id
@@ -95,6 +99,20 @@ public class JugadorController {
      */
     @PutMapping("/jugador/{id}")
     public ResponseEntity<JsonResponse<Jugador>> updateJugador(@RequestBody JugadorModDTO newJugador, @PathVariable Long id){
-        return jugadorServices.updateJugador(id, newJugador);
+        // Iniciamos las dos posibilidades de actualizar el equipo al que pertenece el jugador
+        Integer eliminarEquipo = null;
+        Equipo equipoJugador = null;
+        // Si se recibe nulo no se realizará ninguna modificación al equipo del jugador
+        if(newJugador.getEquipoId() == null){
+            return jugadorServices.updateJugador(id, newJugador, equipoJugador, eliminarEquipo);
+        // Si se recibe 0 se eliminará el equipo al que pertenece el jugador
+        } else if(newJugador.getEquipoId() == 0) {
+            eliminarEquipo = 0;
+            return jugadorServices.updateJugador(id, newJugador, equipoJugador, eliminarEquipo);
+        // Si se recibe un ID de equipo se busca el equipo y se actualiza el jugador
+        } else {
+            equipoJugador = equipoRepository.findById(newJugador.getEquipoId()).orElse(null);
+            return jugadorServices.updateJugador(id, newJugador, equipoJugador, eliminarEquipo);
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.api.wordgames.dto;
 
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PartidaModDTO {
 
     private Long jugadorId;
@@ -13,6 +16,4 @@ public class PartidaModDTO {
     private Integer puntos;
 
     private String palabra;
-
-    private LocalDateTime datetime;
 }

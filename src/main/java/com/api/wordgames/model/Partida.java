@@ -34,15 +34,15 @@ public class Partida {
     @Column(name = "Datetime" , nullable = false)
     private LocalDateTime datetime;
 
-    @JsonBackReference
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name="id_jugador")
+    @JsonBackReference
     private Jugador jugador;
 
-    @JsonBackReference
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name="id_juego")
+    @JsonBackReference
     private Juego juego;
 }

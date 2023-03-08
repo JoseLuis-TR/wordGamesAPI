@@ -10,9 +10,9 @@ public class PartidaDTO {
 
     private Long id;
 
-    private String jugadorId;
+    private Long jugadorId;
 
-    private String juegoId;
+    private Long juegoId;
 
     private Integer intentos;
 

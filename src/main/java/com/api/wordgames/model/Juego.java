@@ -33,7 +33,7 @@ public class Juego {
     @Column(name="dificultad", nullable = false)
     private Dificultad dificultad;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "juego", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Partida> partidas;
 }

@@ -1,5 +1,6 @@
 package com.api.wordgames.services;
 
+import com.api.wordgames.dto.JuegoModDTO;
 import com.api.wordgames.model.Dificultad;
 import com.api.wordgames.model.Juego;
 import com.api.wordgames.repositories.JuegoRepository;
@@ -57,13 +58,18 @@ public class JuegoServices {
      * @return ResponseEntity con el status y el body, 401 si el nombre del juego ya existe,
      *          201 si se crea correctamente
      */
-    public ResponseEntity<JsonResponse<Juego>> saveJuego(Juego newJuego){
+    public ResponseEntity<JsonResponse<Juego>> saveJuego(JuegoModDTO newJuego){
         List<Juego> juegoBuscado = juegoRepository.findByNombreEqualsIgnoreCase(newJuego.getNombre());
         if (!juegoBuscado.isEmpty()){
             JsonResponse<Juego> responseError = new JsonResponse<>(HttpStatus.BAD_REQUEST, "El juego ya existe", null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseError);
         } else {
-            JsonResponse<Juego> response = new JsonResponse<>(HttpStatus.CREATED, "El juego se ha creado correctamente", juegoRepository.save(newJuego));
+            Juego juego = new Juego();
+            juego.setNombre(newJuego.getNombre());
+            juego.setInstrucciones(newJuego.getInstrucciones());
+            juego.setDificultad(newJuego.getDificultad());
+            juego.setIntentosmax(newJuego.getIntentosmax());
+            JsonResponse<Juego> response = new JsonResponse<>(HttpStatus.CREATED, "El juego se ha creado correctamente", juegoRepository.save(juego));
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
     }
@@ -75,7 +81,7 @@ public class JuegoServices {
      * @return ResponseEntity con el status y el body, 404 si no encuentra el juego,
      *          400 si el nombre del juego ya existe, 200 si se actualiza correctamente
      */
-    public ResponseEntity<JsonResponse<Juego>> updateJuego(Long id, Juego juego){
+    public ResponseEntity<JsonResponse<Juego>> updateJuego(Long id, JuegoModDTO juego){
         Optional<Juego> juegoBuscado = juegoRepository.findById(id);
         List<Juego> juegoExiste = juegoRepository.findByNombreEqualsIgnoreCase(juego.getNombre());
         if (juegoBuscado.isEmpty()){

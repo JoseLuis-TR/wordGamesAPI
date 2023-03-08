@@ -43,6 +43,6 @@ public class Jugador {
     private Equipo equipo = null;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "jugador")
+    @OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Partida> partidas;
 }

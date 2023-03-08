@@ -23,7 +23,6 @@ public class JugadorServices {
      */
     @Autowired
     private JugadorRepository jugadorRepository;
-    private EquipoServices equipoServices;
 
     /**
      * Obtenemos todos los jugadores
@@ -69,6 +68,7 @@ public class JugadorServices {
         }
         // Creamos el jugador
         Jugador jugadorCreado = new Jugador();
+        System.out.println(jugadorCreado.getId());
         jugadorCreado.setNombreusu(newJugador.getNombreusu());
         jugadorCreado.setClave(newJugador.getClave());
         jugadorCreado.setAdmin(newJugador.getAdmin());
@@ -76,6 +76,7 @@ public class JugadorServices {
         jugadorCreado.setPuntos(0);
         jugadorCreado.setAvatar("");
         jugadorCreado.setEquipo(null);
+        System.out.println(jugadorCreado);
         JsonResponse<Jugador> response = new JsonResponse<>(HttpStatus.CREATED, "El jugador se ha creado correctamente", jugadorRepository.save(jugadorCreado));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -87,7 +88,7 @@ public class JugadorServices {
      * @return ResponseEntity con el status y el body, 404 si el jugador no existe, 400 si el nombre de usuario ya existe,
      * 200 si se modifica correctamente
      */
-    public ResponseEntity<JsonResponse<Jugador>> updateJugador(Long id, JugadorModDTO jugadorMod){
+    public ResponseEntity<JsonResponse<Jugador>> updateJugador(Long id, JugadorModDTO jugadorMod, Equipo nuevoEquipo, Integer eliminarEquipo){
         Optional<Jugador> jugadorBuscado = getJugadorById(id);
         List<Jugador> jugadorExiste = jugadorRepository.findByNombreusuEqualsIgnoreCase(jugadorMod.getNombreusu());
         // Comprobamos que el jugador exista
@@ -115,16 +116,14 @@ public class JugadorServices {
                     && !jugadorMod.getClave().isEmpty()){
                 jugadorBuscado.get().setClave(jugadorMod.getClave());
             }
-            Equipo equipoJugador = null;
-            // Si no se recibe id de equipo o el id es menor de 1, no se modifica el equipo
-            if(jugadorMod.getEquipoId() != null
-                    && jugadorMod.getEquipoId() > -1){
+            // Si no se recibe id de equipo o un 0, no se realiza ninguna modificación
+            if(nuevoEquipo != null || eliminarEquipo != null) {
                 // Si el id es 0, se elimina el equipo
-                if(jugadorMod.getEquipoId() == 0) {
+                if(eliminarEquipo != null) {
                     jugadorBuscado.get().setEquipo(null);
+                // Si se recibe un equipo, se añade al jugador
                 } else {
-                    equipoJugador = equipoServices.getEquipoById(jugadorMod.getEquipoId()).orElse(null);
-                    jugadorBuscado.get().setEquipo(equipoJugador == null ? jugadorBuscado.get().getEquipo() : equipoJugador);
+                    jugadorBuscado.get().setEquipo(nuevoEquipo);
                 }
             }
             JsonResponse<Jugador> response = new JsonResponse<>(HttpStatus.OK, "El jugador se ha actualizado correctamente", jugadorRepository.save(jugadorBuscado.get()));
