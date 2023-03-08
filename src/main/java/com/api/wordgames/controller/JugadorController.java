@@ -5,6 +5,7 @@ import com.api.wordgames.dto.JugadorModDTO;
 import com.api.wordgames.dto.converter.JugadorDTOConverter;
 import com.api.wordgames.model.Equipo;
 import com.api.wordgames.repositories.EquipoRepository;
+import com.api.wordgames.repositories.JugadorRepository;
 import com.api.wordgames.response.JsonResponse;
 import com.api.wordgames.model.Jugador;
 import com.api.wordgames.services.JugadorServices;
@@ -24,6 +25,7 @@ public class JugadorController {
     private final JugadorServices jugadorServices;
     private final JugadorDTOConverter jugadorDTOConverter;
     private final EquipoRepository equipoRepository;
+    private final JugadorRepository jugadorRepository;
 
     /**
      * Obtenemos todos los jugadores
@@ -44,25 +46,59 @@ public class JugadorController {
     /**
      * Obtenemos un jugador en base a su ID
      *
-     * @param id
+     * @param id Identificador del jugador a buscar
      * @return Error 404 si no encuentra el jugador
      */
     @GetMapping("jugador/{id}")
-    public ResponseEntity<JsonResponse<Jugador>> getJugadorById(@PathVariable Long id){
+    public ResponseEntity<JsonResponse<JugadorDTO>> getJugadorById(@PathVariable Long id){
         Optional<Jugador> jugadorBuscado = jugadorServices.getJugadorById(id);
         if (jugadorBuscado.isEmpty()){
-            JsonResponse<Jugador> responseError = new JsonResponse<>(HttpStatus.NOT_FOUND, "El jugador no existe", null);
+            JsonResponse<JugadorDTO> responseError = new JsonResponse<>(HttpStatus.NOT_FOUND, "El jugador no existe", null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseError);
         } else {
-            JsonResponse<Jugador> response = new JsonResponse<>(HttpStatus.OK, "El jugador existe", jugadorBuscado.get());
+            JugadorDTO jugadorDTO = jugadorDTOConverter.convertToDTO(jugadorBuscado.get());
+            JsonResponse<JugadorDTO> response = new JsonResponse<>(HttpStatus.OK, "El jugador existe", jugadorDTO);
             return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+    }
+
+    /**
+     * Obtenemos una clasificación de jugadores por puntos
+     *
+     * @return lista de jugadores ordenada por puntos
+     */
+    @GetMapping("/jugadores/top")
+    public ResponseEntity<List<?>> getTopJugadores(){
+        List<Jugador> jugadores = jugadorRepository.findAllByOrderByPuntosDesc();
+        if (jugadores.isEmpty()){
+            return ResponseEntity.noContent().build();
+        } else {
+            List<JugadorDTO> jugadorDTOList = jugadores.stream().map(jugadorDTOConverter::convertToDTO).collect(Collectors.toList());
+            return ResponseEntity.ok(jugadorDTOList);
+        }
+    }
+
+    /**
+     * Obtenemos todos los jugadores que pertenecen a un equipo
+     *
+     * @param id Identificador del equipo
+     * @return lista de jugadores
+     */
+    @GetMapping("/jugadores/equipo/{id}")
+    public ResponseEntity<List<?>> getJugadoresByEquipo(@PathVariable Long id){
+        List<Jugador> jugadores = jugadorRepository.findAllByEquipo_Id(id);
+        if (jugadores.isEmpty()){
+            return ResponseEntity.noContent().build();
+        } else {
+            List<JugadorDTO> jugadorDTOList = jugadores.stream().map(jugadorDTOConverter::convertToDTO).collect(Collectors.toList());
+            return ResponseEntity.ok(jugadorDTOList);
         }
     }
 
     /**
      * Eliminamos un jugador en base a su ID
      *
-     * @param id
+     * @param id Identificador del jugador a eliminar
      * @return Error 404 si no encuentra el jugador, 204 si se elimina correctamente
      */
     @DeleteMapping("jugador/{id}")
@@ -80,12 +116,11 @@ public class JugadorController {
     /**
      * Creamos un jugador
      *
-     * @param newJugador
+     * @param newJugador Jugador a crear
      * @return Error 400 si el jugador ya existe
      */
     @PostMapping("/jugador")
     public ResponseEntity<JsonResponse<Jugador>> createJugador(@RequestBody JugadorModDTO newJugador){
-        System.out.println(newJugador.getClave());
         return jugadorServices.saveJugador(newJugador);
     }
 
@@ -93,8 +128,8 @@ public class JugadorController {
      * Actualizamos un jugador
      * Función muy mejorable. No me gusta como está hecha.
      *
-     * @param newJugador
-     * @param id
+     * @param newJugador Jugador a actualizar
+     * @param id Identificador del jugador a actualizar
      * @return Error 404 si no encuentra el jugador, 200 si se actualiza correctamente
      */
     @PutMapping("/jugador/{id}")

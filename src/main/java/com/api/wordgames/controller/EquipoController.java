@@ -1,5 +1,6 @@
 package com.api.wordgames.controller;
 
+import com.api.wordgames.repositories.EquipoRepository;
 import com.api.wordgames.response.JsonResponse;
 import com.api.wordgames.model.Equipo;
 import com.api.wordgames.services.EquipoServices;
@@ -16,6 +17,7 @@ import java.util.Optional;
 public class EquipoController {
 
     private final EquipoServices equipoServices;
+    private final EquipoRepository equipoRepository;
 
     /**
      * Obtenemos todos los equipos
@@ -35,7 +37,7 @@ public class EquipoController {
     /**
      * Obtenemos un equipo en base a su ID
      *
-     * @param id
+     * @param id Identificador del equipo a buscar
      * @return Error 404 si no encuentra el equipo
      */
     @GetMapping("equipo/{id}")
@@ -51,9 +53,24 @@ public class EquipoController {
     }
 
     /**
+     * Obtenemos una clasificación de equipos por puntos
+     *
+     * @return lista de equipos ordenada por puntos
+     */
+    @GetMapping("/equipos/top")
+    public ResponseEntity<Object> getTopEquipos(){
+        List<Equipo> equipos = equipoRepository.findAllByOrderByPuntosDesc();
+        if (equipos.isEmpty()){
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(equipos);
+        }
+    }
+
+    /**
      * Eliminamos un equipo en base a su ID
      *
-     * @param id
+     * @param id Identificador del equipo a eliminar
      * @return Error 404 si no encuentra el equipo, 204 si se elimina correctamente
      */
     @DeleteMapping("equipo/{id}")
@@ -71,7 +88,7 @@ public class EquipoController {
     /**
      * Creamos un equipo
      *
-     * @param newEquipo
+     * @param newEquipo Equipo a crear
      * @return Error 400 si el equipo ya existe
      */
     @PostMapping("/equipo")
@@ -82,8 +99,8 @@ public class EquipoController {
     /**
      * Modificamos un equipo
      *
-     * @param id
-     * @param modEquipo
+     * @param id Identificador del equipo a modificar
+     * @param modEquipo Equipo a modificar
      * @return ResponseEntity con status y body, 404 si no encuentra el equipo, 200 si se actualiza correctamente
      */
     @PutMapping("/equipo/{id}")

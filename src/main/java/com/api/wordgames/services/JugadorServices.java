@@ -36,7 +36,7 @@ public class JugadorServices {
     /**
      * Obtenemos un jugador en base a su ID
      *
-     * @param id
+     * @param id Identificador del jugador
      * @return Jugador o error 404 si no encuentra el jugador
      */
     public Optional<Jugador> getJugadorById(Long id){
@@ -46,7 +46,7 @@ public class JugadorServices {
     /**
      * Elimina un jugador en base a su ID
      *
-     * @param jugador
+     * @param jugador Jugador a eliminar
      */
     public void deleteJugador (Jugador jugador){
         jugadorRepository.delete(jugador);
@@ -55,7 +55,7 @@ public class JugadorServices {
     /**
      * Crea un nuevo jugador
      *
-     * @param newJugador
+     * @param newJugador Jugador a crear
      * @return ResponseEntity con el status y el body, 400 si el nombre del jugador ya existe,
      *          201 si se crea correctamente
      */
@@ -68,7 +68,6 @@ public class JugadorServices {
         }
         // Creamos el jugador
         Jugador jugadorCreado = new Jugador();
-        System.out.println(jugadorCreado.getId());
         jugadorCreado.setNombreusu(newJugador.getNombreusu());
         jugadorCreado.setClave(newJugador.getClave());
         jugadorCreado.setAdmin(newJugador.getAdmin());
@@ -76,7 +75,6 @@ public class JugadorServices {
         jugadorCreado.setPuntos(0);
         jugadorCreado.setAvatar("");
         jugadorCreado.setEquipo(null);
-        System.out.println(jugadorCreado);
         JsonResponse<Jugador> response = new JsonResponse<>(HttpStatus.CREATED, "El jugador se ha creado correctamente", jugadorRepository.save(jugadorCreado));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -84,9 +82,9 @@ public class JugadorServices {
     /**
      * Modifica un jugador
      *
-     * @param jugadorMod
+     * @param jugadorMod Jugador a modificar
      * @return ResponseEntity con el status y el body, 404 si el jugador no existe, 400 si el nombre de usuario ya existe,
-     * 200 si se modifica correctamente
+     * 201 si se modifica correctamente
      */
     public ResponseEntity<JsonResponse<Jugador>> updateJugador(Long id, JugadorModDTO jugadorMod, Equipo nuevoEquipo, Integer eliminarEquipo){
         Optional<Jugador> jugadorBuscado = getJugadorById(id);
@@ -126,8 +124,8 @@ public class JugadorServices {
                     jugadorBuscado.get().setEquipo(nuevoEquipo);
                 }
             }
-            JsonResponse<Jugador> response = new JsonResponse<>(HttpStatus.OK, "El jugador se ha actualizado correctamente", jugadorRepository.save(jugadorBuscado.get()));
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            JsonResponse<Jugador> response = new JsonResponse<>(HttpStatus.CREATED, "El jugador se ha actualizado correctamente", jugadorRepository.save(jugadorBuscado.get()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
     }
 

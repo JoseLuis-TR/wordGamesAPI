@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,5 +35,5 @@ public class Juego {
 
     @OneToMany(mappedBy = "juego", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Set<Partida> partidas;
+    private List<Partida> partidas;
 }

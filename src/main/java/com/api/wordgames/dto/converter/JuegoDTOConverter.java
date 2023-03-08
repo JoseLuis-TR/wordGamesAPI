@@ -12,6 +12,13 @@ public class JuegoDTOConverter {
 
     private final ModelMapper modelMapper;
 
+    /**
+     * Constructor vacío
+     */
+    public JuegoDTOConverter() {
+        this.modelMapper = new ModelMapper();
+    }
+
     public JuegoDTO convertToDTO(Juego juego){
         return modelMapper.map(juego, JuegoDTO.class);
     }

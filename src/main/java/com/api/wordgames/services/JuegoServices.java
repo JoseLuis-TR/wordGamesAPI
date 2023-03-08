@@ -35,7 +35,7 @@ public class JuegoServices {
     /**
      * Obtener un juego en base a su ID
      *
-     * @param id
+     * @param id Identificador del juego a buscar
      * @return Juego o error 404 si no encuentra el juego
      */
     public Optional<Juego> getJuegoById(Long id){
@@ -45,7 +45,7 @@ public class JuegoServices {
     /**
      * Elimina un juego en base a su ID
      *
-     * @param juego
+     * @param juego Juego a eliminar
      */
     public void deleteJuego (Juego juego){
         juegoRepository.delete(juego);
@@ -54,7 +54,7 @@ public class JuegoServices {
     /**
      * Crea un nuevo juego
      *
-     * @param newJuego
+     * @param newJuego Juego a crear
      * @return ResponseEntity con el status y el body, 401 si el nombre del juego ya existe,
      *          201 si se crea correctamente
      */
@@ -77,7 +77,8 @@ public class JuegoServices {
     /**
      * Actualiza un juego
      *
-     * @param juego
+     * @param id Identificador del juego a actualizar
+     * @param juego Juego a actualizar
      * @return ResponseEntity con el status y el body, 404 si no encuentra el juego,
      *          400 si el nombre del juego ya existe, 200 si se actualiza correctamente
      */

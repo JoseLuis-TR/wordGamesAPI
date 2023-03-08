@@ -8,7 +8,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,5 +44,5 @@ public class Jugador {
 
     @JsonManagedReference
     @OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Partida> partidas;
+    private List<Partida> partidas;
 }

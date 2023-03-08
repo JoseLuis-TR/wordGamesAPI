@@ -17,18 +17,40 @@ public class EquipoServices {
     @Autowired
     private EquipoRepository equipoRepository;
 
+    /**
+     * Obtenemos todos los equipos ordenados por puntos
+     *
+     * @return lista de equipos
+     */
     public List<Equipo> getAllEquipos(){
         return equipoRepository.findAll();
     }
 
+    /**
+     * Obtenemos un equipo en base a su ID
+     *
+     * @param id Identificador del equipo a buscar
+     * @return Optional con el equipo
+     */
     public Optional<Equipo> getEquipoById(Long id){
         return equipoRepository.findById(id);
     }
 
+    /**
+     * Eliminamos un equipo en base a su ID
+     *
+     * @param equipo Equipo a eliminar
+     */
     public void deleteEquipo(Equipo equipo){
         equipoRepository.delete(equipo);
     }
 
+    /**
+     * Creamos un nuevo equipo
+     *
+     * @param newEquipo Equipo a crear
+     * @return ResponseEntity con status y body, 400 si el equipo ya existe, 201 si se crea correctamente
+     */
     public ResponseEntity<JsonResponse<Equipo>> saveEquipo(Equipo newEquipo){
         List<Equipo> equiposExiste = equipoRepository.findByNombreEqualsIgnoreCase(newEquipo.getNombre());
         if(!equiposExiste.isEmpty()){
@@ -45,8 +67,8 @@ public class EquipoServices {
     /**
      * Actualizamos un equipo en base a su ID
      *
-     * @param id
-     * @param equipo
+     * @param id Identificador del equipo a actualizar
+     * @param equipo Equipo con los datos actualizados
      * @return ResponseEntity con status y body, 404 si no encuentra el equipo, 200 si se actualiza correctamente
      */
     public ResponseEntity<JsonResponse<Equipo>> updateEquipo(Long id, Equipo equipo){
