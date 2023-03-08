@@ -16,33 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `clasificacion`
---
-
-DROP TABLE IF EXISTS `clasificacion`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `clasificacion` (
-  `idUsuario` int NOT NULL,
-  `nombreusu` varchar(50) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `puntos` int DEFAULT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `idEquipo` int DEFAULT NULL,
-  `nombreequipo` varchar(50) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  PRIMARY KEY (`idUsuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `clasificacion`
---
-
-LOCK TABLES `clasificacion` WRITE;
-/*!40000 ALTER TABLE `clasificacion` DISABLE KEYS */;
-/*!40000 ALTER TABLE `clasificacion` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `equipo`
 --
 
@@ -57,7 +30,7 @@ CREATE TABLE `equipo` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre_UNIQUE` (`nombre`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +39,7 @@ CREATE TABLE `equipo` (
 
 LOCK TABLES `equipo` WRITE;
 /*!40000 ALTER TABLE `equipo` DISABLE KEYS */;
-INSERT INTO `equipo` VALUES (1,'Equipo 33',0,''),(2,'Equipo 99',0,'');
+INSERT INTO `equipo` VALUES (1,'Equipo 33',20,''),(2,'Equipo 99',0,''),(3,'Equipo 120',0,''),(4,'Equipo 100',0,'');
 /*!40000 ALTER TABLE `equipo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,12 +52,13 @@ DROP TABLE IF EXISTS `juego`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `juego` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `dificultad` enum('facil','normal','dificil') COLLATE utf8mb4_spanish_ci NOT NULL,
+  `dificultad` enum('FACIL','NORMAL','DIFICIL') COLLATE utf8mb4_spanish_ci NOT NULL,
   `nombre` varchar(75) COLLATE utf8mb4_spanish_ci NOT NULL,
   `instrucciones` varchar(500) COLLATE utf8mb4_spanish_ci NOT NULL,
   `intentosmax` int NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre_UNIQUE` (`nombre`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,6 +67,7 @@ CREATE TABLE `juego` (
 
 LOCK TABLES `juego` WRITE;
 /*!40000 ALTER TABLE `juego` DISABLE KEYS */;
+INSERT INTO `juego` VALUES (1,'FACIL','Ahorcado','Lorem Ipsum',7),(3,'NORMAL','Wordle','Lorem Ipsum',6);
 /*!40000 ALTER TABLE `juego` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -109,12 +84,12 @@ CREATE TABLE `jugador` (
   `nombreusu` varchar(50) COLLATE utf8mb4_spanish_ci NOT NULL,
   `clave` varchar(255) COLLATE utf8mb4_spanish_ci NOT NULL,
   `avatar` varchar(255) COLLATE utf8mb4_spanish_ci DEFAULT NULL,
-  `puntos` int DEFAULT NULL,
-  `id_equipo` int DEFAULT NULL,
+  `puntos` int DEFAULT '0',
+  `id_equipo` int DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_jugador_Equipo_idx` (`id_equipo`),
   CONSTRAINT `fk_jugador_Equipo` FOREIGN KEY (`id_equipo`) REFERENCES `equipo` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +98,7 @@ CREATE TABLE `jugador` (
 
 LOCK TABLES `jugador` WRITE;
 /*!40000 ALTER TABLE `jugador` DISABLE KEYS */;
-INSERT INTO `jugador` VALUES (1,0,'Nano 1','Puerta.123','',0,1),(2,1,'Nano 2','Pestillo.123','',0,NULL);
+INSERT INTO `jugador` VALUES (1,0,'Nano 1','Puerta.123','',20,1),(6,1,'Nano','Pestillo.123','',NULL,NULL);
 /*!40000 ALTER TABLE `jugador` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -135,18 +110,19 @@ DROP TABLE IF EXISTS `partida`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `partida` (
+  `id` int NOT NULL AUTO_INCREMENT,
   `id_juego` int NOT NULL,
   `id_jugador` int NOT NULL,
   `intentos` int NOT NULL,
   `puntos` int NOT NULL,
   `palabra` varchar(50) COLLATE utf8mb4_spanish_ci NOT NULL,
   `Datetime` date NOT NULL,
-  PRIMARY KEY (`id_juego`,`id_jugador`),
+  PRIMARY KEY (`id`,`id_juego`,`id_jugador`),
   KEY `fk_juego_has_jugador_jugador1_idx` (`id_jugador`),
   KEY `fk_juego_has_jugador_juego1_idx` (`id_juego`),
-  CONSTRAINT `fk_juego_has_jugador_juego1` FOREIGN KEY (`id_juego`) REFERENCES `juego` (`id`),
-  CONSTRAINT `fk_juego_has_jugador_jugador1` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+  CONSTRAINT `fk_juego_has_jugador_juego1` FOREIGN KEY (`id_juego`) REFERENCES `juego` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_juego_has_jugador_jugador1` FOREIGN KEY (`id_jugador`) REFERENCES `jugador` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,6 +131,7 @@ CREATE TABLE `partida` (
 
 LOCK TABLES `partida` WRITE;
 /*!40000 ALTER TABLE `partida` DISABLE KEYS */;
+INSERT INTO `partida` VALUES (1,3,1,2,12,'Pisto','2023-03-09'),(2,1,1,2,8,'Aburrido','2023-03-09');
 /*!40000 ALTER TABLE `partida` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -167,4 +144,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-06  2:05:52
+-- Dump completed on 2023-03-09  0:45:54
