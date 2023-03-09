@@ -19,6 +19,8 @@ Se adjunta en la carpeta resources el archivo JSON con la exportación de las pr
 
 - **master**: Rama inicial del proyecto.
     - Preparación del proyecto y conexión con la base de datos.
+
+
 - **1-EntidadesJugadorEquipo**: Entidades Jugador y equipo
     - Creación de las entidades Jugador y Equipo.
     - CRUD de Jugador y Equipo.
@@ -27,6 +29,8 @@ Se adjunta en la carpeta resources el archivo JSON con la exportación de las pr
     - Control de errores.
     - **A considerar** : Buscar manera de indicar nulo en la columna de equipo de jugador cuando se realice un DELETE 
       del equipo en el que se encuentra (Actualmente solo se puede realizar desde la base de datos con un ON DELETE).
+
+
 - **2-EntidadesPartida**: Entidad Partida y Juego
     - Creación de la entidad Partida y Juego.
     - CRUD de Partida y Juego.
@@ -40,6 +44,14 @@ Se adjunta en la carpeta resources el archivo JSON con la exportación de las pr
     - **IMPORTANTE** Se añade un dump del estado actual de la base de datos en la carpeta resources ya que se ha modificado la creación de la base de datos
     - **IMPORTANTE** Se adjunta en la carpeta resources el archivo JSON con la exportación de las pruebas de requests de Insomnia.
 
+
+- **3-PeticiónPalabra**: Peticiones a un archivo con palabras
+    - Creación de modelo para Palabra, necesario para procesar la lectura del archivo.
+    - Creación de un servicio para leer, procesar y devolver palabras del archivo siguiendo diferentes condiciones.
+    - Creación de un controlador para gestionar las peticiones a la API.
+    - Modificación del servicio y DTO de partida, para no necesitar una palabra en el momento de crear una partida o modificarla, sino que se genere una aleatoriamente.
+    - Se añaden nuevas request para probar los distintos métodos para sacar palabras del archivo de texto.
+    - **A mejorar** : Posible nueva columna en la tabla Juego para indicar unos límites de tamaño de palabra para cada juego (No superar las 5 letras en Wordle por ejemplo). Actualmente la palabra se escoge de manera aleatoria teniendo un tamaño entre 5 y 10 letras.
 
 ## 📚 Información de interés
 

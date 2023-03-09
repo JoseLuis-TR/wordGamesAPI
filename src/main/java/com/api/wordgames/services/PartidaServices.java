@@ -5,7 +5,6 @@ import com.api.wordgames.model.Dificultad;
 import com.api.wordgames.model.Juego;
 import com.api.wordgames.model.Jugador;
 import com.api.wordgames.model.Partida;
-import com.api.wordgames.repositories.JuegoRepository;
 import com.api.wordgames.repositories.PartidaRepository;
 import com.api.wordgames.response.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class PartidaServices {
@@ -26,8 +27,9 @@ public class PartidaServices {
      */
     @Autowired
     private PartidaRepository partidaRepository;
+
     @Autowired
-    private JuegoRepository juegoRepository;
+    private PalabraServices palabraServices;
 
     /**
      * Obtenemos todas las partidas
@@ -62,19 +64,21 @@ public class PartidaServices {
      *
      * @param partida Partida a guardar
      */
-    public ResponseEntity<JsonResponse<Partida>> savePartida (Jugador jugadorPartida, Juego juegoPartida, PartidaModDTO partida) {
+    public ResponseEntity<JsonResponse<Partida>> savePartida (Jugador jugadorPartida, Juego juegoPartida, PartidaModDTO partida) throws IOException {
         if(partida.getIntentos() == null
-                || partida.getPalabra() == null
                 || jugadorPartida == null){
             JsonResponse<Partida> response = new JsonResponse<>(HttpStatus.BAD_REQUEST, "No se han enviado todos los datos", null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } else {
             Partida partidaCreada = new Partida();
+            Random random = new Random();
+            Long tamanioAleatorio = (long) random.nextInt(6) + 5;
+            String palabraJugada = palabraServices.palabraAleatoriaLongitud(tamanioAleatorio);
             partidaCreada.setJugador(jugadorPartida);
             partidaCreada.setJuego(juegoPartida);
             partidaCreada.setIntentos(partida.getIntentos());
-            partidaCreada.setPuntos(calculoPuntosPalabra(partida.getPalabra(), partida.getIntentos(), juegoPartida.getIntentosmax() ,juegoPartida.getDificultad()));
-            partidaCreada.setPalabra(partida.getPalabra());
+            partidaCreada.setPuntos(calculoPuntosPalabra(palabraJugada, partida.getIntentos(), juegoPartida.getIntentosmax() ,juegoPartida.getDificultad()));
+            partidaCreada.setPalabra(palabraJugada);
             partidaCreada.setDatetime(LocalDateTime.now());
             JsonResponse<Partida> response = new JsonResponse<>(HttpStatus.CREATED, "Partida creada correctamente", partidaRepository.save(partidaCreada));
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -89,10 +93,13 @@ public class PartidaServices {
      * @return ResponseEntity con el status y el body, 400 si el nombre del jugador ya existe,
      *          201 si se modifica correctamente
      */
-    public ResponseEntity<JsonResponse<Partida>> updatePartida(PartidaModDTO modPartida, Partida partidaBuscada){
+    public ResponseEntity<JsonResponse<Partida>> updatePartida(PartidaModDTO modPartida, Partida partidaBuscada) throws IOException {
+        Random random = new Random();
+        Long tamanioAleatorio = (long) random.nextInt(6) + 5;
+        String palabraJugada = palabraServices.palabraAleatoriaLongitud(tamanioAleatorio);
         partidaBuscada.setIntentos(modPartida.getIntentos());
-        partidaBuscada.setPuntos(calculoPuntosPalabra(modPartida.getPalabra(), modPartida.getIntentos(), partidaBuscada.getJuego().getIntentosmax() ,partidaBuscada.getJuego().getDificultad()));
-        partidaBuscada.setPalabra(modPartida.getPalabra());
+        partidaBuscada.setPuntos(calculoPuntosPalabra(palabraJugada, modPartida.getIntentos(), partidaBuscada.getJuego().getIntentosmax() ,partidaBuscada.getJuego().getDificultad()));
+        partidaBuscada.setPalabra(palabraJugada);
         partidaBuscada.setDatetime(LocalDateTime.now());
         JsonResponse<Partida> response = new JsonResponse<>(HttpStatus.CREATED, "Partida modificada correctamente", partidaRepository.save(partidaBuscada));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

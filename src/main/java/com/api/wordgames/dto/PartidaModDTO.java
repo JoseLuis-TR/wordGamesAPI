@@ -12,8 +12,4 @@ public class PartidaModDTO {
     private Long juegoId;
 
     private Integer intentos;
-
-    private Integer puntos;
-
-    private String palabra;
 }

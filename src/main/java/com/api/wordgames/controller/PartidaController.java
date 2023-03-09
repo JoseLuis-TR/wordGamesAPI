@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,7 +108,7 @@ public class PartidaController {
      * @return Error 400 si no se puede crear la partida
      */
     @PostMapping("/partida")
-    public ResponseEntity<JsonResponse<Partida>> createPartida(@RequestBody PartidaModDTO newPartida){
+    public ResponseEntity<JsonResponse<Partida>> createPartida(@RequestBody PartidaModDTO newPartida) throws IOException {
         if(newPartida.getJugadorId() == null || newPartida.getJuegoId() == null){
             JsonResponse<Partida> response = new JsonResponse<>(HttpStatus.BAD_REQUEST, "No se ha enviado el id de jugador o juego", null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -117,6 +118,9 @@ public class PartidaController {
             if(jugadorPartida == null || juegoPartida == null){
                 JsonResponse<Partida> response = new JsonResponse<>(HttpStatus.NOT_FOUND, "No se ha encontrado el juego o el jugador", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            } else if (juegoPartida.getIntentosmax() < newPartida.getIntentos()){
+                JsonResponse<Partida> response = new JsonResponse<>(HttpStatus.BAD_REQUEST, "El número de intentos no puede ser mayor que el número de intentos máximo", null);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             } else {
                 return partidaServices.savePartida(jugadorPartida, juegoPartida, newPartida);
             }
@@ -131,7 +135,7 @@ public class PartidaController {
      * @return Error 404 si no encuentra la partida, 200 si se actualiza correctamente.
      */
     @PutMapping("/partida/{id}")
-    public ResponseEntity<JsonResponse<Partida>> updatePartida(@RequestBody PartidaModDTO modPartida, @PathVariable Long id){
+    public ResponseEntity<JsonResponse<Partida>> updatePartida(@RequestBody PartidaModDTO modPartida, @PathVariable Long id) throws IOException {
         Optional<Partida> partidaBuscada = partidaServices.getPlayById(id);
         if(partidaBuscada.isEmpty()){
             JsonResponse<Partida> error = new JsonResponse<>(HttpStatus.NOT_FOUND, "Partida no encontrada", null);
