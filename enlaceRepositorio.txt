@@ -1,1 +1,1 @@
-https://github.com/JoseLuis-TR/wordGamesAPI/tree/2-EntidadesPartida
+https://github.com/JoseLuis-TR/wordGamesAPI/tree/3-Petici%C3%B3nPalabra
